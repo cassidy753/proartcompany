@@ -1,132 +1,114 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import Lenis from "lenis";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import * as THREE from "three";
 
-const courses = [
-  { no: "01", zh: "瑜伽", en: "Yoga", note: "呼吸・伸展・身心平衡" },
-  { no: "02", zh: "普拉提", en: "Pilates", note: "核心・姿勢・穩定訓練" },
-  { no: "03", zh: "健康舞", en: "Aerobic", note: "帶氧・節奏・活力體能" },
-  { no: "04", zh: "尊巴", en: "Zumba", note: "音樂・舞動・全身燃動" },
-  { no: "05", zh: "排舞", en: "Line Dance", note: "步法・協調・社交樂趣" },
+const message = encodeURIComponent("你好，我哋會所想查詢健身課程合作方案。");
+const whatsapp = `https://wa.me/85296803500?text=${message}`;
+
+type Chapter = {
+  no: string; kicker: string; title: string; text: string; image: string;
+  transition: string; transitionLabel: string; badge?: string; align?: "left" | "right";
+};
+
+const chapters: Chapter[] = [
+  { no:"01", kicker:"WELCOME TO PRO ART", title:"踏進一個\n更有活力的社區。", text:"Pro Art Company — 香港私人屋苑會所嘅專業健身課程夥伴。", image:"/images/hero-clubhouse.png", transition:"push", transitionLabel:"鏡頭推進" },
+  { no:"02", kicker:"THE STUDIO AWAITS", title:"五種節奏，\n一個專業夥伴。", text:"瑜伽・普拉提・健康舞・Zumba・排舞，由策劃、導師到行政，一站式妥善處理。", image:"/images/hero-clubhouse.png", transition:"door", transitionLabel:"開門過場", align:"right" },
+  { no:"03", kicker:"YOGA · 瑜伽", title:"由一呼一吸，\n找回身心平衡。", text:"配合不同程度，以呼吸、伸展與穩定練習，讓住戶建立持續的健康習慣。", image:"/images/course-yoga.png", transition:"fly", transitionLabel:"穿越門框", badge:"每週人氣課程" },
+  { no:"04", kicker:"LINE DANCE · 排舞", title:"一步一拍，\n舞出社區默契。", text:"由基本步法到完整舞序，兼顧協調、記憶與社交樂趣，適合恆常小班。", image:"/images/course-linedance.png", transition:"mirror", transitionLabel:"鏡面穿越", align:"right", badge:"輕鬆入門" },
+  { no:"05", kicker:"PILATES · 普拉提", title:"核心穩定，\n動作更有力量。", text:"集中核心控制、姿勢與身體覺察，為不同體能住戶設計循序漸進的課堂。", image:"/images/course-yoga.png", transition:"elevator", transitionLabel:"電梯轉場", badge:"小班指導" },
+  { no:"06", kicker:"AEROBIC · 健康舞", title:"拉開布幕，\n讓活力登場。", text:"簡單易跟的帶氧動作配合熟悉節奏，提升心肺體能，讓運動變成每週期待。", image:"/images/course-linedance.png", transition:"curtain", transitionLabel:"布幕揭曉", align:"right", badge:"銀齡友善" },
+  { no:"07", kicker:"ZUMBA · 尊巴", title:"音樂亮起，\n全身投入節奏。", text:"融合舞蹈與帶氧訓練，氣氛投入、動感十足，為會所注入最直接的快樂能量。", image:"/images/course-zumba.png", transition:"prism", transitionLabel:"稜鏡折射", badge:"高能量體驗" },
+  { no:"08", kicker:"TRUSTED EXPERIENCE", title:"合作簡單，\n成效看得見。", text:"與香港多間私人屋苑會所長期合作。靈活分成、毋須固定成本，開班與行政都更省心。", image:"/images/hero-clubhouse.png", transition:"ripple", transitionLabel:"漣漪擴散", align:"right" },
+  { no:"09", kicker:"OUR VISION", title:"將健康與快樂，\n帶到每一個屋苑會所。", text:"住戶落樓，就能享受專業而愉快的運動體驗。讓每一座屋苑會所，都成為社區的活力中心。", image:"/images/hero-clubhouse.png", transition:"pull", transitionLabel:"鏡頭拉遠" },
 ];
 
-const benefits = [
-  ["01", "到會式教學", "導師按課程時間到達會所授課，善用現有場地，毋須另設專用設施。"],
-  ["02", "度身訂造", "按屋苑住戶年齡、興趣及時段規劃課程組合，提升參與度。"],
-  ["03", "一站式行政", "由課程建議、宣傳素材、開班協調至每月賬單，流程清晰省心。"],
-  ["04", "專業導師配對", "按課程需要安排合適合約導師，確保教學質素與課堂體驗。"],
-];
-
-const steps = [
-  ["01", "洽談", "了解會所場地、住戶需要及營運安排"],
-  ["02", "規劃", "建議課程組合、時段、收費及招生活動"],
-  ["03", "開班", "達到最低報名人數後安排導師到會授課"],
-  ["04", "結算", "按實收學費分賬，承辦方每月發出賬單"],
-];
+function WorldCanvas() {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas || !window.WebGLRenderingContext || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let renderer: THREE.WebGLRenderer;
+    try { renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:false, powerPreference:"low-power" }); }
+    catch { document.documentElement.classList.add("no-webgl"); return; }
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.4));
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, .1, 100);
+    camera.position.z = 7;
+    const geo = new THREE.IcosahedronGeometry(2.25, innerWidth < 800 ? 1 : 2);
+    const mat = new THREE.MeshBasicMaterial({ color:0xc8a45d, wireframe:true, transparent:true, opacity:.17 });
+    const orb = new THREE.Mesh(geo, mat); scene.add(orb);
+    const dotsGeo = new THREE.BufferGeometry();
+    const count = innerWidth < 800 ? 80 : 180;
+    const points = new Float32Array(count * 3);
+    for(let i=0;i<points.length;i++) points[i]=(Math.random()-.5)*13;
+    dotsGeo.setAttribute("position",new THREE.BufferAttribute(points,3));
+    scene.add(new THREE.Points(dotsGeo,new THREE.PointsMaterial({color:0xf7f4ee,size:.025,transparent:true,opacity:.45})));
+    const resize=()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight,false); };
+    resize(); addEventListener("resize",resize);
+    let id=0;
+    const frame=()=>{ const s=scrollY/Math.max(1,document.body.scrollHeight-innerHeight); orb.rotation.x=s*Math.PI*3; orb.rotation.y=s*Math.PI*5; orb.scale.setScalar(.75+s*1.4); renderer.render(scene,camera); id=requestAnimationFrame(frame); };
+    frame();
+    return()=>{cancelAnimationFrame(id);removeEventListener("resize",resize);geo.dispose();mat.dispose();dotsGeo.dispose();renderer.dispose();};
+  },[]);
+  return <canvas ref={ref} className="world-canvas" aria-hidden="true"/>;
+}
 
 export default function Home() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [active,setActive]=useState(1);
+  useEffect(()=>{
+    gsap.registerPlugin(ScrollTrigger);
+    const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const lenis=reduce?null:new Lenis({duration:1.05,smoothWheel:true,wheelMultiplier:.9});
+    let raf=0;
+    const tick=(t:number)=>{lenis?.raf(t);raf=requestAnimationFrame(tick)}; if(lenis) raf=requestAnimationFrame(tick);
+    const sections=gsap.utils.toArray<HTMLElement>(".chapter");
+    sections.forEach((section,i)=>{
+      ScrollTrigger.create({trigger:section,start:"top 55%",end:"bottom 55%",onEnter:()=>setActive(i+1),onEnterBack:()=>setActive(i+1)});
+      if(reduce)return;
+      const scene=section.querySelector(".scene-image"); const copy=section.querySelector(".chapter-copy");
+      gsap.fromTo(copy,{y:70,opacity:0},{y:0,opacity:1,ease:"power3.out",scrollTrigger:{trigger:section,start:"top 72%",end:"top 33%",scrub:1}});
+      if(section.dataset.transition==="push") gsap.fromTo(scene,{scale:1},{scale:1.28,scrollTrigger:{trigger:section,start:"top top",end:"bottom top",scrub:true}});
+      if(section.dataset.transition==="fly") gsap.fromTo(scene,{scale:1.25,filter:"blur(8px)"},{scale:1,filter:"blur(0px)",scrollTrigger:{trigger:section,start:"top bottom",end:"top 20%",scrub:true}});
+      if(section.dataset.transition==="mirror") gsap.fromTo(scene,{scaleX:-1,filter:"brightness(1.8)"},{scaleX:1,filter:"brightness(1)",scrollTrigger:{trigger:section,start:"top bottom",end:"top 25%",scrub:true}});
+      if(section.dataset.transition==="prism") gsap.fromTo(scene,{filter:"hue-rotate(80deg) saturate(2) brightness(2)"},{filter:"hue-rotate(0deg) saturate(1) brightness(.82)",scrollTrigger:{trigger:section,start:"top bottom",end:"top 25%",scrub:true}});
+      if(section.dataset.transition==="pull") gsap.fromTo(scene,{scale:1.4},{scale:.94,scrollTrigger:{trigger:section,start:"top bottom",end:"bottom bottom",scrub:true}});
+    });
+    return()=>{cancelAnimationFrame(raf);lenis?.destroy();ScrollTrigger.getAll().forEach(t=>t.kill());};
+  },[]);
 
-  useEffect(() => {
-    const nodes = document.querySelectorAll<HTMLElement>("[data-reveal]");
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add("is-visible")),
-      { threshold: 0.16 }
-    );
-    nodes.forEach((node) => observer.observe(node));
+  return <main id="top">
+    <WorldCanvas/>
+    <header className="nav">
+      <a href="#top" className="brand" aria-label="Pro Art Company 首頁"><span className="brand-disc">PA</span><span>PRO ART<small>COMPANY</small></span></a>
+      <div className="nav-world" aria-hidden="true"><i style={{"--p":`${active/9}`} as React.CSSProperties}/><span>{String(active).padStart(2,"0")} / 09</span></div>
+      <a className="nav-cta" href={whatsapp} target="_blank" rel="noreferrer">查詢合作 <span>↗</span></a>
+    </header>
+    <aside className="rail" aria-label="章節進度">{chapters.map((c,i)=><a key={c.no} href={`#chapter-${c.no}`} className={active===i+1?"active":""} aria-label={`前往第 ${i+1} 章`}><i/><span>{c.no}</span></a>)}</aside>
 
-    const onScroll = () => {
-      document.documentElement.style.setProperty("--scroll", `${window.scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight)}`);
-    };
-    onScroll();
-    addEventListener("scroll", onScroll, { passive: true });
-    return () => { observer.disconnect(); removeEventListener("scroll", onScroll); };
-  }, []);
+    {chapters.map((c,i)=><section key={c.no} id={`chapter-${c.no}`} className={`chapter chapter-${c.transition} ${c.align==="right"?"copy-right":""}`} data-transition={c.transition}>
+      <div className="scene" aria-hidden="true"><Image className="scene-image" src={c.image} alt="" fill priority={i<2} sizes="100vw" unoptimized/><div className="scene-grade"/></div>
+      {c.transition==="door"&&<div className="door-panels" aria-hidden="true"><i/><i/></div>}
+      {c.transition==="elevator"&&<div className="elevator-panels" aria-hidden="true"><i/><i/><b>05</b></div>}
+      {c.transition==="curtain"&&<div className="curtains" aria-hidden="true"><i/><i/></div>}
+      {c.transition==="ripple"&&<div className="ripples" aria-hidden="true"><i/><i/><i/></div>}
+      <div className="chapter-copy">
+        <p className="kicker"><span>{c.no}</span>{c.kicker}</p>
+        <h1>{c.title.split("\n").map((line,n)=><span key={n}>{line}</span>)}</h1>
+        <p className="chapter-text">{c.text}</p>
+        {c.badge&&<p className="badge"><i/> {c.badge}</p>}
+        {i===7&&<div className="trust-grid"><div><strong>4<sup>+</sup></strong><span>合作會所</span></div><div><strong>15<sup>+</sup></strong><span>每週班次</span></div><div><strong>5</strong><span>課程類別</span></div><div className="share"><strong>60<small>/40</small></strong><span>靈活分成模式</span></div></div>}
+        {i===8?<div className="final-actions"><a className="cta primary" href={whatsapp} target="_blank" rel="noreferrer">WhatsApp 與我哋合作 <span>↗</span></a><a className="cta secondary" href="mailto:proartcompanyhk@gmail.com">Email 查詢</a></div>:<a className="chapter-cta" href={whatsapp} target="_blank" rel="noreferrer">{i<2?"開始規劃會所課程":"想喺你嘅會所開辦呢個課程？"}<span>↗</span></a>}
+      </div>
+      <div className="chapter-foot"><span>{c.no} / 09</span><span>{c.transitionLabel}</span><i/></div>
+    </section>)}
 
-  const closeMenu = () => setMenuOpen(false);
-
-  return (
-    <main>
-      <div className="progress" aria-hidden="true" />
-      <header className="nav-shell">
-        <a className="brand" href="#top" aria-label="Pro Art Company 首頁" onClick={closeMenu}>
-          <span className="brand-mark">PA</span><span>PRO ART <small>COMPANY</small></span>
-        </a>
-        <button className="menu-button" aria-label="開啟導覽選單" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><i /><i /></button>
-        <nav className={menuOpen ? "open" : ""} aria-label="主要導覽">
-          <a href="#courses" onClick={closeMenu}>課程</a><a href="#services" onClick={closeMenu}>服務</a><a href="#model" onClick={closeMenu}>合作模式</a><a href="#team" onClick={closeMenu}>導師團隊</a>
-          <a className="nav-cta" href="#contact" onClick={closeMenu}>查詢合作</a>
-        </nav>
-      </header>
-
-      <section className="hero" id="top">
-        <div className="hero-orbit orbit-one" aria-hidden="true" /><div className="hero-orbit orbit-two" aria-hidden="true" />
-        <div className="hero-copy">
-          <p className="eyebrow" data-reveal>HONG KONG · CLUBHOUSE FITNESS</p>
-          <h1 data-reveal>讓會所課程，<br />成為住戶生活的<br /><em>活力日常。</em></h1>
-          <p className="hero-lead" data-reveal>為香港私人屋苑會所策劃及承辦專業健身與興趣課程。由規劃、導師到行政結算，一站式妥善處理。</p>
-          <div className="hero-actions" data-reveal>
-            <a className="button button-primary" href="#contact">查詢合作 <span>↗</span></a>
-            <a className="text-link" href="#courses">探索課程 <span>↓</span></a>
-          </div>
-        </div>
-        <div className="hero-card" data-reveal>
-          <span className="card-kicker">PROFESSIONAL COURSE PARTNER</span>
-          <strong>專業策劃<br />靈活營運</strong>
-          <span className="card-line" />
-          <p>為每一個社區，設計合適的運動節奏。</p>
-        </div>
-        <div className="scroll-cue" aria-hidden="true"><span>SCROLL</span><i /></div>
-      </section>
-
-      <section className="marquee" aria-label="課程種類">
-        <div>YOGA · PILATES · AEROBIC · ZUMBA · LINE DANCE · YOGA · PILATES · AEROBIC · ZUMBA · LINE DANCE ·</div>
-      </section>
-
-      <section className="courses section-pad" id="courses">
-        <div className="section-intro" data-reveal><p className="eyebrow">OUR COURSES</p><h2>五種課程，<br />多元生活節奏。</h2><p>配合不同年齡、體能與興趣，為住戶建立恆常而有吸引力的會所活動。</p></div>
-        <div className="course-list">
-          {courses.map((course) => <article className="course-row" key={course.no} data-reveal><span>{course.no}</span><h3>{course.zh}</h3><p>{course.en}</p><small>{course.note}</small><i>↗</i></article>)}
-        </div>
-      </section>
-
-      <section className="services section-pad" id="services">
-        <div className="services-sticky" data-reveal><p className="eyebrow light">WHY PRO ART</p><h2>把複雜的營運，<br />變成簡單的合作。</h2><p>會所毋須承擔固定成本；課程達到足夠報名人數才開班，讓資源運用更具彈性。</p></div>
-        <div className="benefit-stack">{benefits.map(([no, title, body]) => <article className="benefit-card" key={no} data-reveal><span>{no}</span><div className="benefit-icon" aria-hidden="true">+</div><h3>{title}</h3><p>{body}</p></article>)}</div>
-      </section>
-
-      <section className="proof section-pad" aria-label="合作規模">
-        <div className="proof-copy" data-reveal><p className="eyebrow">TRUSTED EXPERIENCE</p><h2>與香港多間私人屋苑會所長期合作</h2><p>憑穩定教學、清晰溝通與靈活安排，持續為不同社區營運恆常課程。</p></div>
-        <div className="stats">
-          <div data-reveal><strong>4<span>+</span></strong><p>合作會所</p><small>PARTNER CLUBHOUSES</small></div>
-          <div data-reveal><strong>15<span>+</span></strong><p>每週課堂</p><small>CLASSES EVERY WEEK</small></div>
-          <div data-reveal><strong>5</strong><p>課程類別</p><small>COURSE CATEGORIES</small></div>
-        </div>
-        <p className="privacy-note">基於商業及私隱考慮，合作單位資料不作公開展示。</p>
-      </section>
-
-      <section className="model section-pad" id="model">
-        <div className="model-head" data-reveal><p className="eyebrow light">HOW IT WORKS</p><h2>低風險、透明、<br />可持續的合作模式。</h2><div className="split"><strong>60<small>%</small></strong><span>承辦方</span><i /><strong>40<small>%</small></strong><span>會所</span></div><p>按每月實收課程費用分賬，承辦方發出月結賬單；不設會所固定成本。</p></div>
-        <div className="process" aria-label="合作流程">{steps.map(([no, title, body]) => <article key={no} data-reveal><span>{no}</span><div><h3>{title}</h3><p>{body}</p></div></article>)}</div>
-      </section>
-
-      <section className="team section-pad" id="team">
-        <div data-reveal><p className="eyebrow">INSTRUCTOR NETWORK</p><h2>合適的課程，<br />由合適的專業導師帶領。</h2></div>
-        <div className="team-placeholder" data-reveal><div className="team-rings" aria-hidden="true"><i /><i /><i /></div><div><span>COMING SOON</span><h3>導師團隊資料準備中</h3><p>我們按每項課程的需要配對合適合約導師。導師專頁已預留，稍後將加入個人簡介與專長。</p></div></div>
-      </section>
-
-      <section className="contact section-pad" id="contact">
-        <p className="eyebrow light" data-reveal>LET&apos;S WORK TOGETHER</p><div className="contact-grid">
-          <div data-reveal><h2>為您的會所，<br />規劃下一個<br /><em>人氣課程。</em></h2><p>歡迎會所管理團隊、物業管理公司及業主委員會與我們聯絡。</p><a className="button button-gold" href="mailto:proartcompanyhk@gmail.com">電郵查詢 <span>↗</span></a></div>
-          <address data-reveal>
-            <a href="tel:+85296803500"><small>電話 / WHATSAPP</small><strong>+852 9680 3500</strong></a>
-            <a href="mailto:proartcompanyhk@gmail.com"><small>電郵 / EMAIL</small><strong>proartcompanyhk@gmail.com</strong></a>
-            <div><small>辦公室 / OFFICE</small><strong>九龍觀塘觀塘道472–484號<br />觀塘工業中心第3期10樓S室</strong><span>Flat S, 10/F, Block 3, Kwun Tong Industrial Centre, 472–484 Kwun Tong Road, Kwun Tong, Kowloon</span></div>
-          </address>
-        </div>
-      </section>
-
-      <footer><a className="brand footer-brand" href="#top"><span className="brand-mark">PA</span><span>PRO ART <small>COMPANY</small></span></a><p>私人屋苑會所課程承辦商</p><small>© {new Date().getFullYear()} Pro Art Company. All rights reserved.</small></footer>
-    </main>
-  );
+    <section className="team-note" aria-label="導師團隊"><span>INSTRUCTOR NETWORK · COMING SOON</span><h2>專業導師團隊資料準備中</h2><p>我們按每項課程需要配對合適的專業導師；個人簡介與專長將於稍後公開。</p></section>
+    <footer><div className="footer-brand"><span className="brand-disc">PA</span><div><strong>Pro Art Company</strong><span>香港私人屋苑會所嘅專業健身課程夥伴</span></div></div><div className="footer-links"><a href="tel:+85296803500">+852 9680 3500</a><a href="mailto:proartcompanyhk@gmail.com">proartcompanyhk@gmail.com</a></div><address>Flat S, 10/F, Block 3, Kwun Tong Industrial Centre,<br/>472–484 Kwun Tong Road, Kwun Tong, Kowloon</address><small>© {new Date().getFullYear()} Pro Art Company. All rights reserved.</small></footer>
+    <a className="wa-float" href={whatsapp} target="_blank" rel="noreferrer" aria-label="WhatsApp 查詢合作"><span>WA</span><i>查詢合作</i></a>
+  </main>;
 }

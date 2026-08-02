@@ -14,10 +14,12 @@ test("server-renders the finished Pro Art site", async () => {
   assert.equal(response.status, 200);
   const html = await response.text();
   assert.match(html, /<html lang="zh-Hant-HK">/);
-  assert.match(html, /<title>Pro Art Company｜私人屋苑會所健身課程承辦商<\/title>/);
-  assert.match(html, /讓會所課程/);
-  assert.match(html, /4<span>\+<\/span>/);
-  assert.match(html, /15<span>\+<\/span>/);
+  assert.match(html, /<title>Pro Art Company｜香港會所健身課程專業夥伴<\/title>/);
+  assert.match(html, /將健康與快樂/);
+  assert.match(html, /id="chapter-09"/);
+  assert.equal((html.match(/data-transition=/g) || []).length, 9);
+  assert.match(html, /4<sup>\+<\/sup>/);
+  assert.match(html, /15<sup>\+<\/sup>/);
   assert.match(html, /導師團隊資料準備中/);
   assert.match(html, /proartcompanyhk@gmail\.com/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/);
@@ -29,7 +31,11 @@ test("ships finished assets and no starter preview", async () => {
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
-  assert.match(page, /IntersectionObserver/);
+  assert.match(page, /new Lenis/);
+  assert.match(page, /ScrollTrigger/);
+  assert.match(page, /WebGLRenderer/);
+  assert.match(page, /transition:"push"/);
+  assert.match(page, /transition:"pull"/);
   assert.match(layout, /og\.png/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   await access(new URL("../public/og.png", import.meta.url));
