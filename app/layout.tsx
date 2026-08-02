@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://pro-art-company-hk.brks4p8t6v.chatgpt.site"),
   title: "Pro Art Company｜私人屋苑會所健身課程承辦商",
   description: "為香港私人屋苑會所提供瑜伽、普拉提、健康舞、尊巴及排舞課程策劃與一站式承辦服務。",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
