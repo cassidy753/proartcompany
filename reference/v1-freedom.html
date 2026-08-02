@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro Art Company — 專業會所健身課程承辦商</title>
+<meta name="description" content="Pro Art Company 為香港私人屋苑會所提供度身訂造的健身課程：瑜伽、普拉提、健康舞、Zumba 及排舞。到會式教學、一站式營運、彈性合作模式。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231E5B41'/%3E%3Ctext x='32' y='43' font-size='30' text-anchor='middle' fill='%23F7F4EE' font-family='Georgia'%3EPA%3C/text%3E%3C/svg%3E">
+<style>
+  /* ============ Design Tokens ============ */
+  :root{
+    --ink:#16231B;
+    --primary:#1E5B41;
+    --primary-soft:#E7F0EA;
+    --accent:#C8A45D;
+    --bg:#F7F4EE;
+    --surface:#FFFFFF;
+    --muted:#5F6B63;
+    --line:#E3DED3;
+    --serif:"Noto Serif TC","Songti TC","STSong",Georgia,serif;
+    --sans:-apple-system,"PingFang HK","Noto Sans TC","Microsoft JhengHei",sans-serif;
+    --maxw:1180px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--accent);color:var(--ink)}
+  img{max-width:100%;display:block}
+
+  /* ============ Scroll Progress Bar ============ */
+  #progress{
+    position:fixed;top:0;left:0;height:3px;width:100%;
+    background:linear-gradient(90deg,var(--primary),var(--accent));
+    transform-origin:0 50%;
+    transform:scaleX(0);
+    z-index:1000;
+    animation:progressGrow linear;
+    animation-timeline:scroll(root);
+  }
+  @keyframes progressGrow{to{transform:scaleX(1)}}
+
+  /* ============ Nav ============ */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:900;
+    transition:background .4s var(--ease),box-shadow .4s var(--ease),backdrop-filter .4s;
+  }
+  header.scrolled{
+    background:rgba(247,244,238,.86);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 1px 0 var(--line);
+  }
+  .nav-inner{
+    max-width:var(--maxw);margin:0 auto;padding:18px 28px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .brand{
+    font-family:var(--serif);font-weight:700;font-size:20px;letter-spacing:.04em;
+    color:var(--ink);text-decoration:none;
+    display:flex;align-items:center;gap:10px;
+  }
+  .brand-mark{
+    width:34px;height:34px;border-radius:9px;
+    background:var(--primary);color:var(--bg);
+    display:grid;place-items:center;
+    font-family:var(--serif);font-size:14px;font-weight:700;letter-spacing:.02em;
+  }
+  .nav-links{display:flex;gap:30px;align-items:center}
+  .nav-links a{
+    color:var(--muted);text-decoration:none;font-size:14.5px;font-weight:500;
+    transition:color .25s;
+  }
+  .nav-links a:hover{color:var(--primary)}
+  .nav-cta{
+    background:var(--primary);color:var(--bg)!important;
+    padding:9px 18px;border-radius:999px;font-weight:600;
+    transition:transform .25s var(--ease),background .25s!important;
+  }
+  .nav-cta:hover{background:#174930;transform:translateY(-1px)}
+  .nav-burger{display:none;background:none;border:none;cursor:pointer;padding:6px}
+  .nav-burger span{display:block;width:22px;height:2px;background:var(--ink);margin:5px 0;border-radius:2px;transition:.3s}
+
+  /* ============ Shared Layout ============ */
+  section{position:relative}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+  .sec-label{
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:12.5px;font-weight:700;letter-spacing:.28em;
+    color:var(--primary);text-transform:uppercase;margin-bottom:20px;
+  }
+  .sec-label::before{content:"";width:28px;height:1.5px;background:var(--accent)}
+  .sec-title{
+    font-family:var(--serif);font-size:clamp(30px,4.6vw,48px);
+    font-weight:700;line-height:1.25;letter-spacing:.01em;
+  }
+  .sec-sub{
+    color:var(--muted);font-size:16.5px;max-width:640px;margin-top:16px;
+  }
+
+  /* ============ Reveal System (IntersectionObserver + CSS fallback) ============ */
+  .reveal{
+    opacity:0;transform:translateY(34px);
+    transition:opacity .9s var(--ease),transform .9s var(--ease);
+  }
+  .reveal.in{opacity:1;transform:none}
+  .reveal.d1{transition-delay:.08s}
+  .reveal.d2{transition-delay:.16s}
+  .reveal.d3{transition-delay:.24s}
+  .reveal.d4{transition-delay:.32s}
+  .reveal.d5{transition-delay:.40s}
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1;transform:none;transition:none}
+    #progress{animation:none}
+  }
+
+  /* ============ Hero ============ */
+  .hero{
+    min-height:100svh;
+    display:flex;align-items:center;
+    padding:140px 0 90px;
+    background:
+      radial-gradient(1100px 520px at 88% -10%, rgba(200,164,93,.16), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(30,91,65,.10), transparent 55%),
+      var(--bg);
+    overflow:hidden;
+  }
+  .hero-inner{display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center}
+  .hero-kicker{
+    font-size:13px;font-weight:700;letter-spacing:.3em;color:var(--accent);
+    text-transform:uppercase;margin-bottom:26px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .hero-kicker::before{content:"";width:36px;height:1.5px;background:var(--accent)}
+  .hero h1{
+    font-family:var(--serif);
+    font-size:clamp(40px,6.4vw,74px);
+    font-weight:700;line-height:1.18;letter-spacing:.01em;
+  }
+  .hero h1 .accent{color:var(--primary);position:relative;white-space:nowrap}
+  .hero h1 .accent::after{
+    content:"";position:absolute;left:0;right:0;bottom:.06em;height:.16em;
+    background:linear-gradient(90deg,rgba(200,164,93,.5),rgba(200,164,93,.15));
+    border-radius:2px;z-index:-1;
+  }
+  .hero p.lead{
+    margin-top:26px;font-size:18.5px;color:var(--muted);max-width:520px;
+  }
+  .hero-cta{display:flex;gap:16px;margin-top:40px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:15px 30px;border-radius:999px;
+    font-size:15.5px;font-weight:600;text-decoration:none;
+    transition:transform .25s var(--ease),box-shadow .25s,background .25s;
+  }
+  .btn-primary{background:var(--primary);color:var(--bg);box-shadow:0 8px 24px rgba(30,91,65,.28)}
+  .btn-primary:hover{background:#174930;transform:translateY(-2px)}
+  .btn-ghost{
+    border:1.5px solid var(--line);color:var(--ink);background:transparent;
+  }
+  .btn-ghost:hover{border-color:var(--primary);color:var(--primary);transform:translateY(-2px)}
+  .hero-meta{
+    display:flex;gap:0;margin-top:52px;border-top:1px solid var(--line);padding-top:26px;
+  }
+  .hero-meta .m{flex:1}
+  .hero-meta .m+.m{border-left:1px solid var(--line);padding-left:26px}
+  .hero-meta .num{
+    font-family:var(--serif);font-size:34px;font-weight:700;color:var(--primary);
+    display:flex;align-items:baseline;gap:2px;
+  }
+  .hero-meta .num small{font-size:17px;color:var(--accent);font-family:var(--sans)}
+  .hero-meta .lbl{font-size:12.5px;color:var(--muted);margin-top:2px;letter-spacing:.05em}
+
+  /* Hero right visual — typographic motion card */
+  .hero-art{position:relative;height:460px;display:grid;place-items:center}
+  .art-ring{
+    position:absolute;inset:0;margin:auto;
+    width:min(430px,88%);aspect-ratio:1;border-radius:50%;
+    border:1px solid rgba(30,91,65,.22);
+    animation:ringSpin 46s linear infinite;
+  }
+  .art-ring::before{
+    content:"";position:absolute;top:-5px;left:50%;width:10px;height:10px;border-radius:50%;
+    background:var(--accent);
+  }
+  .art-ring.r2{width:min(330px,70%);border-color:rgba(200,164,93,.35);animation-duration:34s;animation-direction:reverse}
+  .art-card{
+    position:relative;z-index:2;text-align:center;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:44px 40px;
+    box-shadow:0 30px 70px rgba(22,35,27,.12);
+    animation:float 7s ease-in-out infinite;
+    max-width:320px;
+  }
+  .art-card .pa{font-family:var(--serif);font-size:44px;font-weight:700;color:var(--primary);letter-spacing:.06em}
+  .art-card .tag{margin-top:10px;font-size:13px;letter-spacing:.24em;color:var(--muted);text-transform:uppercase}
+  .art-card .line{width:34px;height:2px;background:var(--accent);margin:16px auto}
+  .art-card .cn{font-family:var(--serif);font-size:15px;color:var(--ink)}
+  @keyframes ringSpin{to{transform:rotate(360deg)}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+  .scroll-hint{
+    position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    color:var(--muted);font-size:11px;letter-spacing:.3em;text-transform:uppercase;
+  }
+  .scroll-hint .mouse{width:22px;height:36px;border:1.5px solid var(--muted);border-radius:12px;position:relative}
+  .scroll-hint .mouse::after{
+    content:"";position:absolute;top:7px;left:50%;transform:translateX(-50%);
+    width:3px;height:7px;border-radius:2px;background:var(--accent);
+    animation:wheel 1.8s ease-in-out infinite;
+  }
+  @keyframes wheel{0%{opacity:0;transform:translate(-50%,0)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,12px)}}
+
+  /* ============ Partners Wall (largest credibility block) ============ */
+  .partners{
+    background:var(--ink);
+    color:var(--bg);
+    padding:clamp(72px,10vw,120px) 0;
+    overflow:hidden;
+  }
+  .partners .sec-label{color:var(--accent)}
+  .partners .sec-label::before{background:var(--accent)}
+  .partners .sec-title{color:var(--bg)}
+  .partners .sec-sub{color:rgba(247,244,238,.72)}
+  .partners-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap;margin-bottom:64px}
+  .partners-count{
+    font-family:var(--serif);font-size:clamp(44px,7vw,84px);font-weight:700;
+    color:var(--accent);line-height:1;white-space:nowrap;
+  }
+  .partners-count small{font-size:.38em;color:rgba(247,244,238,.6);font-family:var(--sans);letter-spacing:.1em}
+  .logo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+  .logo-card{
+    position:relative;overflow:hidden;
+    background:rgba(247,244,238,.05);
+    border:1px solid rgba(247,244,238,.12);
+    border-radius:18px;
+    min-height:170px;
+    display:grid;place-items:center;
+    padding:34px;
+    transition:background .35s,border-color .35s,transform .35s var(--ease);
+  }
+  .logo-card:hover{background:rgba(247,244,238,.09);border-color:rgba(200,164,93,.5);transform:translateY(-3px)}
+  .logo-card .ph{
+    text-align:center;color:rgba(247,244,238,.85);
+    font-family:var(--serif);font-size:clamp(22px,3vw,30px);font-weight:700;letter-spacing:.08em;
+  }
+  .logo-card .ph .en{
+    display:block;margin-top:8px;
+    font-family:var(--sans);font-size:12px;font-weight:600;
+    letter-spacing:.26em;text-transform:uppercase;color:rgba(200,164,93,.85);
+  }
+  .logo-card .ph .note{
+    display:block;margin-top:14px;
+    font-family:var(--sans);font-size:11px;font-weight:400;
+    letter-spacing:.08em;color:rgba(247,244,238,.45);
+  }
+  .logo-card img{max-height:86px;width:auto;filter:grayscale(1) brightness(1.6);transition:filter .4s}
+  .logo-card:hover img{filter:none}
+
+  /* ============ Stats strip ============ */
+  .stats{
+    background:var(--surface);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+  .stat{padding:52px 34px;text-align:center}
+  .stat+.stat{border-left:1px solid var(--line)}
+  .stat .n{font-family:var(--serif);font-size:clamp(38px,5vw,58px);font-weight:700;color:var(--primary);line-height:1}
+  .stat .n em{font-style:normal;color:var(--accent);font-size:.55em;vertical-align:.55em}
+  .stat .t{margin-top:10px;font-size:13.5px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+
+  /* ============ Courses ============ */
+  .courses{padding:clamp(80px,11vw,140px) 0}
+  .course-list{margin-top:56px;border-top:1px solid var(--line)}
+  .course-row{
+    display:grid;grid-template-columns:120px 1fr auto;
+    gap:30px;align-items:center;
+    padding:34px 6px;border-bottom:1px solid var(--line);
+    text-decoration:none;color:inherit;
+    transition:background .3s,padding .3s var(--ease);
+  }
+  .course-row:hover{padding-left:18px;background:linear-gradient(90deg,var(--primary-soft),transparent 70%)}
+  .course-row .no{font-family:var(--serif);font-size:15px;color:var(--accent);font-weight:700;letter-spacing:.1em}
+  .course-row .nm{font-family:var(--serif);font-size:clamp(24px,3.4vw,34px);font-weight:700;transition:color .3s}
+  .course-row:hover .nm{color:var(--primary)}
+  .course-row .nm .en{display:block;font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.3em;color:var(--muted);margin-top:4px;text-transform:uppercase}
+  .course-row .ds{font-size:15px;color:var(--muted);max-width:520px}
+  .course-row .arrow{
+    width:46px;height:46px;border-radius:50%;border:1px solid var(--line);
+    display:grid;place-items:center;color:var(--primary);
+    font-size:18px;transition:background .3s,color .3s,border-color .3s,transform .3s var(--ease);
+  }
+  .course-row:hover .arrow{background:var(--primary);color:var(--bg);border-color:var(--primary);transform:rotate(45deg)}
+
+  /* ============ Why us ============ */
+  .why{background:var(--primary-soft);padding:clamp(80px,11vw,140px) 0;overflow:hidden}
+  .why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;margin-top:56px}
+  .why-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:20px;
+    padding:36px 34px;position:relative;
+    transition:transform .35s var(--ease),box-shadow .35s;
+  }
+  .why-card:hover{transform:translateY(-4px);box-shadow:0 24px 50px rgba(22,35,27,.10)}
+  .why-card .idx{
+    font-family:var(--serif);font-size:15px;font-weight:700;color:var(--accent);
+    letter-spacing:.1em;margin-bottom:18px;
+  }
+  .why-card h3{font-family:var(--serif);font-size:23px;font-weight:700;margin-bottom:12px}
+  .why-card p{font-size:15px;color:var(--muted)}
+  .why-card .bar{width:34px;height:2.5px;background:var(--accent);border-radius:2px;margin-bottom:18px}
+
+  /* ============ Cooperation model ============ */
+  .model{padding:clamp(80px,11vw,140px) 0}
+  .model-split{display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:56px;align-items:start}
+  .model-card{
+    background:var(--ink);color:var(--bg);border-radius:24px;
+    padding:44px 40px;position:relative;overflow:hidden;
+  }
+  .model-card::before{
+    content:"";position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;
+    background:radial-gradient(circle,rgba(200,164,93,.28),transparent 65%);
+  }
+  .model-card h3{font-family:var(--serif);font-size:26px;font-weight:700;color:var(--accent);margin-bottom:8px}
+  .model-card .slogan{font-size:16px;color:rgba(247,244,238,.85);margin-bottom:28px}
+  .model-point{display:flex;gap:14px;padding:15px 0;border-top:1px solid rgba(247,244,238,.12);align-items:flex-start}
+  .model-point:last-child{border-bottom:1px solid rgba(247,244,238,.12)}
+  .model-point .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:9px;flex-shrink:0}
+  .model-point p{font-size:14.5px;color:rgba(247,244,238,.82)}
+  .model-point strong{color:var(--bg);font-weight:600}
+
+  .flow{margin-top:10px}
+  .flow-step{display:grid;grid-template-columns:56px 1fr;gap:22px;position:relative;padding-bottom:38px}
+  .flow-step::before{
+    content:"";position:absolute;left:27px;top:52px;bottom:6px;width:1.5px;
+    background:linear-gradient(var(--line),transparent);
+  }
+  .flow-step:last-child::before{display:none}
+  .flow-step .n{
+    width:56px;height:56px;border-radius:50%;border:1.5px solid var(--primary);
+    display:grid;place-items:center;
+    font-family:var(--serif);font-size:19px;font-weight:700;color:var(--primary);
+    background:var(--bg);position:relative;z-index:1;
+  }
+  .flow-step h4{font-family:var(--serif);font-size:21px;font-weight:700;padding-top:10px;margin-bottom:6px}
+  .flow-step p{font-size:14.5px;color:var(--muted);max-width:430px}
+
+  /* ============ Instructors (reserved section) ============ */
+  .instructors{
+    background:var(--surface);
+    border-top:1px solid var(--line);
+    padding:clamp(80px,11vw,140px) 0;
+  }
+  .instructors-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;margin-top:56px}
+  .instructor-card{
+    border:1px dashed var(--line);border-radius:20px;
+    padding:44px 38px;text-align:center;
+    background:linear-gradient(180deg,var(--bg),var(--surface));
+    transition:border-color .3s;
+  }
+  .instructor-card:hover{border-color:var(--accent)}
+  .instructor-card .avatar{
+    width:84px;height:84px;border-radius:50%;margin:0 auto 22px;
+    background:var(--primary-soft);border:1.5px solid var(--primary);
+    display:grid;place-items:center;
+    font-family:var(--serif);font-size:26px;color:var(--primary);
+  }
+  .instructor-card h3{font-family:var(--serif);font-size:23px;font-weight:700}
+  .instructor-card .role{font-size:13px;letter-spacing:.16em;color:var(--accent);text-transform:uppercase;margin-top:6px}
+  .instructor-card p{font-size:14.5px;color:var(--muted);margin-top:16px;max-width:420px;margin-left:auto;margin-right:auto}
+  .instructor-card .soon{
+    display:inline-block;margin-top:20px;font-size:11.5px;font-weight:600;
+    letter-spacing:.2em;color:var(--muted);border:1px solid var(--line);
+    padding:7px 16px;border-radius:999px;text-transform:uppercase;
+  }
+
+  /* ============ Contact ============ */
+  .contact{
+    background:
+      radial-gradient(900px 480px at 100% 0%, rgba(200,164,93,.14), transparent 60%),
+      var(--ink);
+    color:var(--bg);
+    padding:clamp(80px,11vw,140px) 0;
+  }
+  .contact .sec-label{color:var(--accent)}
+  .contact .sec-label::before{background:var(--accent)}
+  .contact .sec-title{color:var(--bg)}
+  .contact .sec-sub{color:rgba(247,244,238,.72)}
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:56px;align-items:start}
+  .contact-item{
+    display:flex;gap:18px;align-items:flex-start;
+    padding:22px 0;border-bottom:1px solid rgba(247,244,238,.12);
+  }
+  .contact-item .ic{
+    width:44px;height:44px;border-radius:12px;flex-shrink:0;
+    background:rgba(247,244,238,.08);border:1px solid rgba(247,244,238,.14);
+    display:grid;place-items:center;color:var(--accent);
+  }
+  .contact-item .ic svg{width:19px;height:19px}
+  .contact-item .k{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:rgba(247,244,238,.55)}
+  .contact-item .v{font-size:18px;font-weight:600;margin-top:4px}
+  .contact-item a.v{color:var(--bg);text-decoration:none;transition:color .25s}
+  .contact-item a.v:hover{color:var(--accent)}
+  .contact-actions{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+  .btn-light{background:var(--accent);color:var(--ink);box-shadow:0 10px 30px rgba(200,164,93,.3)}
+  .btn-light:hover{transform:translateY(-2px);filter:brightness(1.05)}
+  .btn-outline-light{border:1.5px solid rgba(247,244,238,.4);color:var(--bg)}
+  .btn-outline-light:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+  .contact-form{
+    background:var(--surface);border-radius:24px;padding:38px 36px;color:var(--ink);
+    box-shadow:0 30px 70px rgba(0,0,0,.25);
+  }
+  .contact-form h3{font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:6px}
+  .contact-form .hint{font-size:13.5px;color:var(--muted);margin-bottom:26px}
+  .field{margin-bottom:18px}
+  .field label{display:block;font-size:12.5px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:8px}
+  .field input,.field textarea{
+    width:100%;padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;
+    font-family:var(--sans);font-size:15px;color:var(--ink);background:var(--bg);
+    transition:border-color .25s,box-shadow .25s;
+    resize:vertical;
+  }
+  .field input:focus,.field textarea:focus{
+    outline:none;border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(30,91,65,.12);
+  }
+  .form-note{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.6}
+
+  /* ============ Footer ============ */
+  footer{background:#101A14;color:rgba(247,244,238,.6);padding:52px 0 40px}
+  .foot-inner{max-width:var(--maxw);margin:0 auto;padding:0 28px;display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:center}
+  .foot-brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:700;font-size:17px;color:var(--bg)}
+  .foot-meta{font-size:12.5px;line-height:1.9;text-align:right}
+
+  /* ============ Responsive ============ */
+  @media (max-width:960px){
+    .hero-inner{grid-template-columns:1fr;gap:40px}
+    .hero-art{height:360px}
+    .hero{padding-top:120px}
+    .model-split,.contact-grid{grid-template-columns:1fr;gap:44px}
+    .logo-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:720px){
+    .nav-links{display:none}
+    .nav-burger{display:block}
+    .nav-links.open{
+      display:flex;position:absolute;top:100%;left:0;right:0;
+      flex-direction:column;gap:0;background:var(--bg);
+      border-bottom:1px solid var(--line);padding:10px 0;
+    }
+    .nav-links.open a{padding:14px 28px;width:100%}
+    .nav-links.open .nav-cta{margin:10px 28px;justify-content:center}
+    .stats-grid{grid-template-columns:1fr}
+    .stat+.stat{border-left:none;border-top:1px solid var(--line)}
+    .why-grid,.instructors-grid{grid-template-columns:1fr}
+    .course-row{grid-template-columns:1fr;gap:12px;padding:26px 6px}
+    .course-row .arrow{display:none}
+    .hero-meta{flex-direction:column;gap:20px}
+    .hero-meta .m+.m{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:18px}
+    .logo-grid{grid-template-columns:1fr}
+    .partners-head{flex-direction:column;align-items:flex-start}
+    .foot-inner{flex-direction:column;align-items:flex-start}
+    .foot-meta{text-align:left}
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- ================= NAV ================= -->
+<header id="header">
+  <div class="nav-inner">
+    <a class="brand" href="#top"><span class="brand-mark">PA</span>Pro Art Company</a>
+    <button class="nav-burger" id="burger" aria-label="選單"><span></span><span></span><span></span></button>
+    <nav class="nav-links" id="navlinks">
+      <a href="#courses">課程</a>
+      <a href="#why">服務特色</a>
+      <a href="#model">合作模式</a>
+      <a href="#instructors">導師團隊</a>
+      <a href="#contact" class="nav-cta">查詢合作</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="top">
+  <div class="wrap hero-inner">
+    <div>
+      <div class="hero-kicker reveal">專業會所健身課程承辦商</div>
+      <h1>
+        <span class="reveal d1">將健康生活，<br>帶到屋苑會所。</span><br>
+        <span class="reveal d2"><span class="accent">度身訂造</span> 嘅到會式課程</span>
+      </h1>
+      <p class="lead reveal d3">Pro Art Company 為香港私人屋苑會所提供瑜伽、普拉提、健康舞、Zumba 及排舞等健身課程 — 由課程設計、導師安排到行政營運，一站式包辦。</p>
+      <div class="hero-cta reveal d4">
+        <a href="#contact" class="btn btn-primary">查詢合作方案 →</a>
+        <a href="#courses" class="btn btn-ghost">瀏覽課程</a>
+      </div>
+      <div class="hero-meta reveal d5">
+        <div class="m"><div class="num"><span class="cnum" data-to="4">0</span><small>+</small></div><div class="lbl">合作會所</div></div>
+        <div class="m"><div class="num"><span class="cnum" data-to="15">0</span><small>+</small></div><div class="lbl">每週班次</div></div>
+        <div class="m"><div class="num"><span class="cnum" data-to="5">0</span></div><div class="lbl">課程種類</div></div>
+      </div>
+    </div>
+    <div class="hero-art reveal d3">
+      <div class="art-ring"></div>
+      <div class="art-ring r2"></div>
+      <div class="art-card">
+        <div class="pa">PA</div>
+        <div class="tag">Pro Art Company</div>
+        <div class="line"></div>
+        <div class="cn">Yoga · Pilates · Aerobic · Zumba · Line Dance</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint"><div class="mouse"></div>Scroll</div>
+</section>
+
+<!-- ================= PARTNERS (Largest credibility block) ================= -->
+<section class="partners" id="partners">
+  <div class="wrap">
+    <div class="partners-head">
+      <div>
+        <div class="sec-label reveal">合作會所 Our Partners</div>
+        <h2 class="sec-title reveal d1">香港多間屋苑會所<br>信賴嘅課程夥伴</h2>
+        <p class="sec-sub reveal d2">多年來與多個私人屋苑會所建立長期合作關係，為住戶提供穩定、高質素嘅恆常健身課程。</p>
+      </div>
+      <div class="partners-count reveal d2"><span class="cnum" data-to="4">0</span><small>+ 合作會所</small></div>
+    </div>
+    <div class="logo-grid" id="logoGrid">
+      <!-- 會所 logo 位置 — 由 Ca 提供 logo 後替換 .ph 內容 -->
+      <div class="logo-card reveal"><div class="ph">恆峯花園<span class="en">Hang Fung Garden</span><span class="note">LOGO 待提供</span></div></div>
+      <div class="logo-card reveal d1"><div class="ph">駿景園<span class="en">Royal Ascot</span><span class="note">LOGO 待提供</span></div></div>
+      <div class="logo-card reveal d2"><div class="ph">合作會所<span class="en">Partner 03</span><span class="note">LOGO 待提供</span></div></div>
+      <div class="logo-card reveal d3"><div class="ph">合作會所<span class="en">Partner 04</span><span class="note">LOGO 待提供</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STATS ================= -->
+<section class="stats">
+  <div class="wrap stats-grid">
+    <div class="stat reveal"><div class="n"><span class="cnum" data-to="4">0</span><em>+</em></div><div class="t">合作屋苑會所</div></div>
+    <div class="stat reveal d1"><div class="n"><span class="cnum" data-to="15">0</span><em>+</em></div><div class="t">每週恆常班次</div></div>
+    <div class="stat reveal d2"><div class="n"><span class="cnum" data-to="5">0</span></div><div class="t">專業課程種類</div></div>
+  </div>
+</section>
+
+<!-- ================= COURSES ================= -->
+<section class="courses" id="courses">
+  <div class="wrap">
+    <div class="sec-label reveal">課程種類 Courses</div>
+    <h2 class="sec-title reveal d1">五大恆常課程<br>適合不同年齡及體能水平</h2>
+    <p class="sec-sub reveal d2">所有課程均可按會所住戶嘅年齡層、體能狀況及需求，度身調整內容、強度與節奏。</p>
+
+    <div class="course-list">
+      <a class="course-row reveal" href="#contact">
+        <div class="no">01</div>
+        <div class="nm">瑜伽 Yoga<span class="en">Yoga</span></div>
+        <div class="ds">提升柔韌度與平衡力，舒緩肌肉繃緊及壓力；針對腰背痛症特別設計嘅溫和動作，適合初學者至資深學員。</div>
+        <div class="arrow">→</div>
+      </a>
+      <a class="course-row reveal" href="#contact">
+        <div class="no">02</div>
+        <div class="nm">普拉提 Pilates<span class="en">Pilates</span></div>
+        <div class="ds">強化核心肌群、改善體態及身體協調，動作細緻安全，尤其適合希望改善姿勢嘅都市人。</div>
+        <div class="arrow">→</div>
+      </a>
+      <a class="course-row reveal" href="#contact">
+        <div class="no">03</div>
+        <div class="nm">健康舞 Aerobic<span class="en">Aerobic</span></div>
+        <div class="ds">節奏明快嘅帶氧運動，提升心肺功能、燃燒卡路里，一班人一齊跳，氣氛輕鬆愉快。</div>
+        <div class="arrow">→</div>
+      </a>
+      <a class="course-row reveal" href="#contact">
+        <div class="no">04</div>
+        <div class="nm">Zumba 尊巴<span class="en">Zumba</span></div>
+        <div class="ds">結合拉丁音樂與舞蹈嘅健身課程，喺歡樂嘅節拍中完成全身運動，減壓又消脂。</div>
+        <div class="arrow">→</div>
+      </a>
+      <a class="course-row reveal" href="#contact">
+        <div class="no">05</div>
+        <div class="nm">排舞 Line Dance<span class="en">Line Dance</span></div>
+        <div class="ds">以固定舞步編排嘅排舞，鍛鍊節奏感、記憶力與身體協調，深受中老年住戶歡迎。</div>
+        <div class="arrow">→</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHY US ================= -->
+<section class="why" id="why">
+  <div class="wrap">
+    <div class="sec-label reveal">服務特色 Why Us</div>
+    <h2 class="sec-title reveal d1">點解會所選擇我哋？</h2>
+    <p class="sec-sub reveal d2">唔使自設場地、唔使管理行政細節 — 我哋包辦由課程到營運嘅每一步。</p>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <div class="idx">01</div><div class="bar"></div>
+        <h3>到會式教學</h3>
+        <p>導師直接到會所場地上堂，善用會所現有設施。唔使自設場地、唔使添置器材，住戶落樓即可上堂。</p>
+      </div>
+      <div class="why-card reveal d1">
+        <div class="idx">02</div><div class="bar"></div>
+        <h3>度身訂造課程</h3>
+        <p>按會所住戶嘅年齡層、興趣及體能水平設計課程內容與上堂時間，確保每班都有足夠吸引力。</p>
+      </div>
+      <div class="why-card reveal d2">
+        <div class="idx">03</div><div class="bar"></div>
+        <h3>一站式行政營運</h3>
+        <p>課程規劃、宣傳海報、報名管理、點名記錄到定期結算帳單，全部由我哋處理，會所毋須額外人手。</p>
+      </div>
+      <div class="why-card reveal d3">
+        <div class="idx">04</div><div class="bar"></div>
+        <h3>彈性合作模式</h3>
+        <p>以課程收費分成合作，開班先有支出、冇班冇成本 — 對會所零風險、零行政負擔。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COOPERATION MODEL ================= -->
+<section class="model" id="model">
+  <div class="wrap">
+    <div class="sec-label reveal">合作模式 Partnership</div>
+    <h2 class="sec-title reveal d1">簡單直接嘅合作流程</h2>
+    <p class="sec-sub reveal d2">由洽談到開班，最快兩星期內可以推出第一期課程。</p>
+
+    <div class="model-split">
+      <div class="model-card reveal">
+        <h3>雙贏分成模式</h3>
+        <p class="slogan">與會所共享課程收入，無固定成本、無前期投資。</p>
+        <div class="model-point"><span class="dot"></span><p><strong>學費分成</strong> — 課程收費按比例與會所分成，收入透明</p></div>
+        <div class="model-point"><span class="dot"></span><p><strong>開班先有支出</strong> — 按實際報名人數安排導師，人數不足自動調節，唔會浪費資源</p></div>
+        <div class="model-point"><span class="dot"></span><p><strong>定期清晰結算</strong> — 每月帳單列明班次、人數與分成，一目了然</p></div>
+      </div>
+
+      <div class="flow">
+        <div class="flow-step reveal">
+          <div class="n">1</div>
+          <div><h4>洽談需求</h4><p>了解會所住戶群、現有設施同目標，確認課程方向。</p></div>
+        </div>
+        <div class="flow-step reveal d1">
+          <div class="n">2</div>
+          <div><h4>課程規劃</h4><p>度身設計課表、收費與宣傳物料，提交方案。</p></div>
+        </div>
+        <div class="flow-step reveal d2">
+          <div class="n">3</div>
+          <div><h4>開班營運</h4><p>安排專業導師、管理報名與課堂運作。</p></div>
+        </div>
+        <div class="flow-step reveal d3">
+          <div class="n">4</div>
+          <div><h4>定期結算</h4><p>每月提供清晰帳單，準時結算分成款項。</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INSTRUCTORS (reserved) ================= -->
+<section class="instructors" id="instructors">
+  <div class="wrap">
+    <div class="sec-label reveal">導師團隊 Instructors</div>
+    <h2 class="sec-title reveal d1">專業、穩定、用心</h2>
+    <p class="sec-sub reveal d2">我哋嘅導師團隊具備豐富教學經驗及相關專業資格，並定期接受培訓，確保課程質素一致。</p>
+    <div class="instructors-grid">
+      <div class="instructor-card reveal">
+        <div class="avatar">創</div>
+        <h3>創辦人及首席導師</h3>
+        <div class="role">Founder & Lead Instructor</div>
+        <p>多年健身課程教學經驗，主理課程設計及質素管理。（導師簡介即將推出）</p>
+        <div class="soon">簡介準備中</div>
+      </div>
+      <div class="instructor-card reveal d1">
+        <div class="avatar">團</div>
+        <h3>合約導師網絡</h3>
+        <div class="role">Contract Instructor Network</div>
+        <p>按課程需要邀請具備專業資格嘅合約導師加入，確保每個課程都有最合適嘅教學人選。</p>
+        <div class="soon">簡介準備中</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="contact" id="contact">
+  <div class="wrap">
+    <div class="sec-label reveal">聯絡我們 Contact</div>
+    <h2 class="sec-title reveal d1">有合作計劃？<br>隨時搵我哋傾。</h2>
+    <p class="sec-sub reveal d2">無論係會所、管理公司定業主委員會，歡迎查詢課程方案及索取報價。</p>
+
+    <div class="contact-grid">
+      <div>
+        <div class="contact-item reveal">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <div><div class="k">電話</div><a class="v" href="tel:+85296803500">+852 9680 3500</a></div>
+        </div>
+        <div class="contact-item reveal d1">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div><div class="k">電郵</div><a class="v" href="mailto:proartcompanyhk@gmail.com">proartcompanyhk@gmail.com</a></div>
+        </div>
+        <div class="contact-item reveal d2">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+          <div><div class="k">WhatsApp</div><a class="v" href="https://wa.me/85296803500">+852 9680 3500</a></div>
+        </div>
+        <div class="contact-item reveal d3">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div><div class="k">辦公室</div><div class="v" style="font-size:14.5px;font-weight:500">觀塘工業中心第三期 10/F S室<br>觀塘道 472–484 號</div></div>
+        </div>
+
+        <div class="contact-actions reveal d4">
+          <a class="btn btn-light" href="https://wa.me/85296803500?text=你好，我哋會所想查詢健身課程合作方案。" target="_blank" rel="noopener">WhatsApp 直接傾 →</a>
+          <a class="btn btn-outline-light" href="mailto:proartcompanyhk@gmail.com?subject=課程合作查詢">電郵查詢</a>
+        </div>
+      </div>
+
+      <form class="contact-form reveal d2" id="contactForm" onsubmit="return handleSubmit(event)">
+        <h3>查詢合作方案</h3>
+        <p class="hint">填妥以下資料，我哋會盡快回覆。</p>
+        <div class="field">
+          <label for="fName">機構 / 會所名稱</label>
+          <input id="fName" name="name" type="text" placeholder="例：翠峰園會所" required>
+        </div>
+        <div class="field">
+          <label for="fContact">聯絡方法（電話 / WhatsApp / 電郵）</label>
+          <input id="fContact" name="contact" type="text" placeholder="例：9123 4567" required>
+        </div>
+        <div class="field">
+          <label for="fMsg">查詢內容</label>
+          <textarea id="fMsg" name="msg" rows="4" placeholder="例：想了解瑜伽班合作模式、課堂收費同開班條件…"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">提交查詢 →</button>
+        <p class="form-note">＊表單會透過你嘅電郵程式寄出；亦可直接 WhatsApp 我哋，回覆更快。</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand"><span class="brand-mark">PA</span>Pro Art Company</div>
+    <div class="foot-meta">
+      觀塘工業中心第三期 10/F S室（觀塘道 472–484 號）<br>
+      Tel +852 9680 3500 · proartcompanyhk@gmail.com<br>
+      © <span id="year">2026</span> Pro Art Company. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  /* ===== Header scroll state ===== */
+  var header=document.getElementById('header');
+  var onScroll=function(){header.classList.toggle('scrolled',window.scrollY>20)};
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+  /* ===== Mobile nav ===== */
+  var burger=document.getElementById('burger'),nav=document.getElementById('navlinks');
+  burger.addEventListener('click',function(){nav.classList.toggle('open')});
+  nav.addEventListener('click',function(e){if(e.target.tagName==='A')nav.classList.remove('open')});
+
+  /* ===== Reveal on scroll ===== */
+  var reveals=document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}
+      });
+    },{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+    reveals.forEach(function(el){io.observe(el)});
+  }else{reveals.forEach(function(el){el.classList.add('in')})}
+
+  /* ===== Count-up numbers ===== */
+  var nums=document.querySelectorAll('.cnum');
+  function animateNum(el){
+    var to=parseInt(el.getAttribute('data-to'),10),start=null;
+    var dur=1400;
+    function step(ts){
+      if(!start)start=ts;
+      var p=Math.min((ts-start)/dur,1);
+      var eased=1-Math.pow(1-p,3);
+      el.textContent=Math.round(to*eased);
+      if(p<1)requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if('IntersectionObserver' in window){
+    var nio=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){animateNum(en.target);nio.unobserve(en.target)}
+      });
+    },{threshold:.6});
+    nums.forEach(function(el){nio.observe(el)});
+  }else{nums.forEach(animateNum)}
+
+  /* ===== Contact form → mailto ===== */
+  window.handleSubmit=function(e){
+    e.preventDefault();
+    var n=document.getElementById('fName').value.trim();
+    var c=document.getElementById('fContact').value.trim();
+    var m=document.getElementById('fMsg').value.trim();
+    var body='機構/會所：'+n+'\n聯絡方法：'+c+'\n\n查詢內容：\n'+m;
+    var mail='mailto:proartcompanyhk@gmail.com?subject='+encodeURIComponent('課程合作查詢 — '+n)+'&body='+encodeURIComponent(body);
+    window.location.href=mail;
+    return false;
+  };
+
+  /* ===== Year ===== */
+  document.getElementById('year').textContent=new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
