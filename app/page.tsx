@@ -9,6 +9,7 @@ import * as THREE from "three";
 
 const message = encodeURIComponent("你好，我哋會所想查詢健身課程合作方案。");
 const whatsapp = `https://wa.me/85296803500?text=${message}`;
+const assetPath = process.env.GITHUB_PAGES === "true" ? "/proartcompany" : "";
 
 type Chapter = {
   no: string; kicker: string; title: string; text: string; image: string;
@@ -91,7 +92,7 @@ export default function Home() {
     <aside className="rail" aria-label="章節進度">{chapters.map((c,i)=><a key={c.no} href={`#chapter-${c.no}`} className={active===i+1?"active":""} aria-label={`前往第 ${i+1} 章`}><i/><span>{c.no}</span></a>)}</aside>
 
     {chapters.map((c,i)=><section key={c.no} id={`chapter-${c.no}`} className={`chapter chapter-${c.transition} ${c.align==="right"?"copy-right":""}`} data-transition={c.transition}>
-      <div className="scene" aria-hidden="true"><Image className="scene-image" src={c.image} alt="" fill priority={i<2} sizes="100vw" unoptimized/><div className="scene-grade"/></div>
+      <div className="scene" aria-hidden="true"><Image className="scene-image" src={`${assetPath}${c.image}`} alt="" fill priority={i<2} sizes="100vw" unoptimized/><div className="scene-grade"/></div>
       {c.transition==="door"&&<div className="door-panels" aria-hidden="true"><i/><i/></div>}
       {c.transition==="elevator"&&<div className="elevator-panels" aria-hidden="true"><i/><i/><b>05</b></div>}
       {c.transition==="curtain"&&<div className="curtains" aria-hidden="true"><i/><i/></div>}
