@@ -1,38 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "Starter Project",
-  description: "A clean starting point for building your site.",
-  icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-  },
+  title: "Pro Art Company｜私人屋苑會所健身課程承辦商",
+  description: "為香港私人屋苑會所提供瑜伽、普拉提、健康舞、尊巴及排舞課程策劃與一站式承辦服務。",
+  icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+  openGraph: { title: "Pro Art Company｜專業會所健身課程承辦", description: "讓會所課程，成為住戶生活的活力日常。", images: ["/og.png"], locale: "zh_HK", type: "website" },
+  twitter: { card: "summary_large_image", title: "Pro Art Company", description: "專業會所健身課程承辦", images: ["/og.png"] },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <html lang="zh-Hant-HK"><body>{children}</body></html>;
 }
