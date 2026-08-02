@@ -11,13 +11,12 @@ Build a complete, professional corporate website for **Pro Art Company**, a Hong
 - **Current scale:** ~4 clubhouses partnered, ~15 classes per week
 - **Commercial model:** revenue split with clubhouse (contractor takes 60% of collected class fees, clubhouse 40%). Contractor issues monthly invoices. No fixed costs for the clubhouse — classes only run when enough people enrol.
 - **Contact:** Tel +852 9680 3500 · Email proartcompanyhk@gmail.com · Office: Flat S, 10/F, Block 3, Kwun Tong Industrial Centre, 472–484 Kwun Tong Road, Kwun Tong, Kowloon
-- **Known partner clubhouses:** 恆峯花園 (Hang Fung Garden), 駿景園 / Royal Ascot. There are ~4 total; the other two names are unknown — leave clearly-marked placeholders.
 - **Audience:** clubhouse management / estate management companies / owners' committees in Hong Kong. Site must feel professional and credible — this is the "calling card" when seeking clubhouse partnerships.
 - **Language:** Traditional Chinese (Hong Kong) primary, English accents welcome.
 
 ## Client requirements (hard constraints from the owner's son)
 
-1. **Partner clubhouse names must be displayed as a logo wall, placed prominently (largest/most visible credibility block).** Real logos are not available yet — use elegant text-based placeholder cards (Chinese + English name) ready to swap for real logo images later.
+1. **Do NOT display any partner clubhouse names or logos anywhere on the site** (no text names, no logo placeholders, no "合作會所" client lists, nothing that identifies partner estates). This is a privacy/commercial decision — respect it strictly. Build credibility instead through: scale numbers (4+ partner clubhouses, 15+ classes per week — these figures are approved), the professional service model, and clean corporate presentation. You may still have a section framed around "與香港多間私人屋苑會所長期合作" without naming any.
 2. **Use the latest scroll-driven / scrollytelling presentation style** — modern scroll animations (progressive reveals, parallax/pin sections, count-up stats, animated flow lines). The site should feel current and premium, not a static brochure.
 3. **Do NOT display instructor names yet** — but the site structure must reserve a dedicated instructors/team section (placeholder ready for names + bios to be added later).
 
