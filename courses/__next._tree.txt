@@ -1,2 +1,2 @@
-:HL["/proartcompany/_next/static/chunks/13-m3~b-rhavn.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"courses","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"3Rarjxh0gl4eEyiu7dSnG"}
+:HL["/proartcompany/_next/static/chunks/0qg65~4xv_~sn.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"courses","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"sqTDsVuH7VIKtxAnK3zDf"}
