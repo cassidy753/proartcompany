@@ -36,6 +36,8 @@ test("home keeps the four-scene motion stack", async () => {
   assert.match(page, /WebGLRenderer/);
   assert.match(page, /world-stage/);
   assert.match(page, /scrub: 1\.15/);
+  assert.match(page, /index === 0/);
+  assert.match(page, /timeline\.set\(copy, \{ y: 0, autoAlpha: 1 \}, 0\)/);
   assert.match(page, /group-yoga\.png/);
   assert.match(page, /group-linedance\.png/);
   assert.match(page, /group-zumba\.png/);
@@ -55,6 +57,19 @@ test("ships brand assets and no named partners or instructors", async () => {
   assert.doesNotMatch(source, /會所名稱|導師姓名/);
   await access(new URL("../public/og.png", import.meta.url));
   await access(new URL("../public/images/hero-clubhouse.png", import.meta.url));
-  for (const image of ["group-yoga.png", "group-linedance.png", "group-zumba.png", "group-pilates.png"])
+  for (const image of ["group-yoga.png", "group-linedance.png", "group-zumba.png", "group-pilates.png", "group-aerobic.png"])
     await access(new URL(`../public/images/${image}`, import.meta.url));
+});
+
+test("uses only the cinematic image set and warm orange accent", async () => {
+  const files = await Promise.all([
+    readFile(new URL("../app/data.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/home-world.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  const source = files.join("\n").toLowerCase();
+  for (const image of ["hero-clubhouse.png", "group-yoga.png", "group-linedance.png", "group-zumba.png", "group-pilates.png", "group-aerobic.png"])
+    assert.match(source, new RegExp(image.replace(".", "\\.")));
+  assert.doesNotMatch(source, /course-(yoga|linedance|zumba)\.png|#c8a45d|0xc8a45d/);
+  assert.match(source, /#ff7a3d/);
 });

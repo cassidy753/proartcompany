@@ -30,7 +30,7 @@ function Particles() {
     const count = innerWidth < 768 ? 55 : 120; const points = new Float32Array(count * 3);
     for (let i = 0; i < points.length; i++) points[i] = (Math.random() - .5) * 12;
     geometry.setAttribute("position", new THREE.BufferAttribute(points, 3));
-    const material = new THREE.PointsMaterial({ color: 0xc8a45d, size: .035, transparent: true, opacity: .55 });
+    const material = new THREE.PointsMaterial({ color: 0xff7a3d, size: .035, transparent: true, opacity: .42 });
     const field = new THREE.Points(geometry, material); scene.add(field);
     const resize = () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight, false); };
     resize(); addEventListener("resize", resize);
@@ -63,7 +63,11 @@ export function HomeWorld() {
         const copy = scene.querySelector<HTMLElement>(".world-copy");
         const at = index * 1.45;
         timeline.fromTo(image, { scale: index === 3 ? 1.12 : 1.02, xPercent: index % 2 ? 1.5 : -1.5 }, { scale: index === 3 ? .98 : 1.14, xPercent: index % 2 ? -1.5 : 1.5, duration: 2.05 }, at);
-        timeline.fromTo(copy, { y: 34, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .55, ease: "power2.out" }, at + .12);
+        if (index === 0) {
+          timeline.set(copy, { y: 0, autoAlpha: 1 }, 0);
+        } else {
+          timeline.fromTo(copy, { y: 34, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .55, ease: "power2.out" }, at + .12);
+        }
         if (index < sceneEls.length - 1) {
           timeline.to(scene, { autoAlpha: 0, duration: .48 }, at + 1.16);
           timeline.to(image, { filter: "blur(5px)", duration: .38 }, at + 1.08);
