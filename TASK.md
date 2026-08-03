@@ -1,27 +1,19 @@
-# Pro Art Company — Taste Polish + Smooth Scroll World (Codex Task v6)
+# Pro Art Company — Giga-style Dark Rebrand (Codex Task v7)
 
-Continue from the hybrid architecture (ARCHITECTURE.md — still the structural spec). Client feedback on the current build:
+Client wants the WHOLE site restyled to match the reference (Giga AI enterprise site — see client screenshot): **dark premium theme, warm ORANGE highlight accent (replacing gold), cinematic realistic imagery (replacing Pixar cartoon style)**. Structure stays Hybrid (ARCHITECTURE.md). Taste skill still applies (`~/.agents/skills/design-taste-frontend/`).
 
-1. **Direction is close** — keep the hybrid structure (4-scene scroll world home + multi-page).
-2. **Apply the Taste skill hard.** Load `~/.agents/skills/design-taste-frontend/` and run the full anti-slop discipline + pre-flight check (Section 14) on the whole site. Declare your design read + dials (ARCHITECTURE.md provides them: VARIANCE 7 / MOTION 6 / DENSITY 3, premium-consumer wellness, deep green × gold). Fix anything the pre-flight flags.
-3. **Scroll world must feel like a smooth customer experience, not choppy cuts.** The current 4-scene opening reads as disconnected stills. Make it feel like ONE continuous flight through the clubhouse world:
-   - Smooth continuous motion between scenes (crossfades / continuous zoom / matching motion direction, no hard cuts)
-   - Scene images should flow into each other (scale/blur/parallax continuity), transitions feel physical, not slapped together
-   - Tune Lenis + GSAP scrubbing so scrolling feels weighty and fluid; no jank on mobile
-   - Keep CSS scroll-driven animations and WebGL particles as enhancement, but prioritize the seamless journey feel
-4. **Interest classes are GROUP activities.** The course imagery/copy must communicate 一群⼈一齊上堂 (community, togetherness), not solo practice:
-   - NEW group images are in `public/images/`: `group-yoga.png`, `group-linedance.png`, `group-zumba.png`, `group-pilates.png` (all show groups of people practicing together). Use them in the scroll world scenes and/or course cards instead of the solo images where it improves the message.
-   - Refresh course copy to emphasize group/community: 一班人一齊、社區、同樂、一齊郁 (keep the approved tone from ARCHITECTURE.md/company-intro-draft.md).
+## What to change
 
-## Constraints (unchanged)
-- NO clubhouse names/logos. NO instructor names (placeholders only).
-- Palette: emerald #1E5B41 × gold #C8A45D × cream #F7F4EE. Traditional Chinese (HK).
-- Mobile-first, 60fps mid-range phones, iOS must not blank, `prefers-reduced-motion` respected.
-- CTA label「查詢合作」consistent; zero em-dashes; nav single line; WhatsApp float + bottom bar on every page.
-- GitHub Pages export (`npm run build:github-pages` → `out/`); push fresh static build to `gh-pages`; commit source to `main`.
+1. **Imagery — ALL NEW Giga-style images are already in `public/images/`** (cinematic, dark moody, warm orange/gold lighting, group classes):
+   - `hero-clubhouse.png` (clubhouse at dusk by lake — hero scene)
+   - `group-yoga.png`, `group-linedance.png`, `group-zumba.png`, `group-pilates.png`, `group-aerobic.png`
+   - Replace all Pixar-style usage (scroll world scenes, course cards, about) with these. Delete or stop referencing the old cartoon images (`course-yoga.png`, `course-linedance.png`, `course-zumba.png` etc. if unused).
+2. **Accent color: gold → orange.** Swap the accent token (currently `#C8A45D` / gold family) for a warm orange (suggest `#FF7A3D` / `#F97316` family — pick a refined orange that stays premium, not neon). Keep deep emerald `#1E5B41` → evolve to a darker, moodier deep green/ink base if it improves the dark premium feel (client reference is dark navy/black-ish with orange — we keep our brand green but darker).
+3. **Dark premium polish** matching the reference: deep dark backgrounds, generous negative space, thin hairlines, orange accents ONLY as highlights (buttons, links, key numbers), large confident typography. Keep it tasteful (Taste skill anti-slop: no neon glow, no AI-purple, contrast AA, zero em-dash, nav single line).
+4. Keep everything else: hybrid structure, 5-item nav, floating WhatsApp, bottom bar, no clubhouse names, no instructor names (placeholders), mobile-first, reduced-motion.
 
 ## Verify
-- `npm run build:github-pages` + `npm test` (update tests if structure changed)
-- Dev server: check all routes, console clean, mobile, and scroll through the world opening repeatedly — must feel fluid
+- `npm run build:github-pages` + `npm test` (update tests if image paths changed)
+- Dev server: all routes, console clean, mobile, scroll world still smooth
 - Rebuild + push `gh-pages`; confirm live URL
-- Report: what you changed (design polish, scroll smoothness, group imagery/copy), URL
+- Report: what changed (images, accent, dark polish), URL
