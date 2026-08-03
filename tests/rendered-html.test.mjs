@@ -34,6 +34,11 @@ test("home keeps the four-scene motion stack", async () => {
   assert.match(page, /new Lenis/);
   assert.match(page, /ScrollTrigger/);
   assert.match(page, /WebGLRenderer/);
+  assert.match(page, /world-stage/);
+  assert.match(page, /scrub: 1\.15/);
+  assert.match(page, /group-yoga\.png/);
+  assert.match(page, /group-linedance\.png/);
+  assert.match(page, /group-zumba\.png/);
   assert.equal((page.match(/title:/g) || []).length, 4);
 });
 
@@ -50,4 +55,6 @@ test("ships brand assets and no named partners or instructors", async () => {
   assert.doesNotMatch(source, /會所名稱|導師姓名/);
   await access(new URL("../public/og.png", import.meta.url));
   await access(new URL("../public/images/hero-clubhouse.png", import.meta.url));
+  for (const image of ["group-yoga.png", "group-linedance.png", "group-zumba.png", "group-pilates.png"])
+    await access(new URL(`../public/images/${image}`, import.meta.url));
 });

@@ -15,7 +15,7 @@ export function Footer() {
   return <footer className="bottom-bar">
     <div className="footer-brand"><span className="brand-mark">PA</span><div><strong>Pro Art Company</strong><span>專業健身課程承辦商</span></div></div>
     <div><a href="tel:+85296803500">+852 9680 3500</a><a href="mailto:proartcompanyhk@gmail.com">proartcompanyhk@gmail.com</a></div>
-    <address>Flat S, 10/F, Block 3, Kwun Tong Industrial Centre,<br />472–484 Kwun Tong Road, Kwun Tong, Kowloon</address>
+    <address>Flat S, 10/F, Block 3, Kwun Tong Industrial Centre,<br />472-484 Kwun Tong Road, Kwun Tong, Kowloon</address>
     <small>© {new Date().getFullYear()} Pro Art Company. All rights reserved.</small>
   </footer>;
 }
