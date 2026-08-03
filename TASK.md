@@ -1,27 +1,33 @@
-# Pro Art Company — Website Build (Codex Task v3)
+# Pro Art Company — 2026 Free Upgrade (Codex Task v4)
 
-You are the DESIGN OWNER and BUILDER. The client wants a **2026-grade scroll world website**. Read `DESIGN.md` in this directory — it is the approved experience spec (client confirmed the 9-chapter Scroll World structure, CTA system, bottom bar, mobile-first strategy). You have full creative/technical autonomy on everything else: visual design, animation, tech implementation. Do not ask for permission — build it, verify it, report.
+Upgrade the existing scroll world site to a **2026-grade lifestyle/wellness design** using **FREE techniques only** (no paid AI video APIs — the paid scroll-world pipeline is deferred). The site already works (9 chapters, Lenis, GSAP ScrollTrigger, WebGL particles, Pixar images, WhatsApp float, bottom bar). This pass makes it look unmistakably 2026.
 
-## Hard constraints (non-negotiable)
+Read `DESIGN.md` for approved experience. Read `app/page.tsx` + `app/globals.css` before changing anything.
 
-1. **Scroll World format** — immersive scroll-driven journey, 9 chapters as specified in DESIGN.md (會所大門 → 舞蹈室大門 → 瑜伽課 → 鏡面穿越排舞 → 普拉提 → 健康舞 → Zumba → 大堂全景/數字信任 → 俯瞰願景). Each chapter uses a DIFFERENT transition technique (push-in, door open, fly-through, mirror portal, elevator, curtain reveal, prism flash, ripple, pull-out). This is the #1 requirement.
-2. **Modern 2026 style** — the previous version was rejected as "not 2026". Go premium: smooth scrolling (Lenis), scroll-driven 3D (Three.js / React Three Fiber or equivalent WebGL), GSAP ScrollTrigger, kinetic typography, generous motion. Must feel like an award-winning scrollytelling site, not a brochure.
-3. **Visuals: Pixar-style 3D renders** — AI-generated image style: warm, stylized, cinematic (emerald green #1E5B41 × gold #C8A45D palette). 4 images already exist in `public/images/` (hero-clubhouse.png, course-yoga.png, course-linedance.png, course-zumba.png) — reuse them; generate more yourself if needed (you have image generation tools) for the remaining chapters (Pilates, Aerobic, etc.). No stock photos.
-4. **CTA everywhere** — floating WhatsApp button fixed bottom-right at all times (prefilled message: 「你好，我哋會所想查詢健身課程合作方案。」), per-chapter CTA at chapter ends, big CTA in chapter 9, "查詢合作" in nav. WhatsApp first, phone +852 9680 3500, email proartcompanyhk@gmail.com.
-5. **Bottom bar** — site footer with: company name Pro Art Company, Tel +852 9680 3500, Email proartcompanyhk@gmail.com, Office address (Flat S, 10/F, Block 3, Kwun Tong Industrial Centre, 472–484 Kwun Tong Road, Kwun Tong, Kowloon), copyright.
-6. **NO partner clubhouse names or logos anywhere** — privacy decision (a section framed as 「與香港多間私人屋苑會所長期合作」 + numbers 4+ clubhouses / 15+ classes per week is fine; never name them).
-7. **NO instructor names** — reserve the team section as placeholder for future profiles.
-8. **Mobile-first** — readers open the link on phones (70%+ traffic). Content/CTA sized for mobile; desktop gets enhanced 3D. Keep 60fps on mid-range phones (low-poly, compressed images, prefers-reduced-motion respected).
-9. **Company intro copy** — `company-intro-draft.md` has approved direction (short/medium/long versions). Use them; refine the wording naturally.
-10. **Free hosting preview** — no paid domain yet. Make the site statically deployable to free hosting (GitHub Pages / Cloudflare Pages / Vercel free tier) and produce a preview URL. Document how to redeploy.
+## What to implement (2026 trends, all free)
 
-## Stack
+1. **CSS scroll-driven animations** — the 2026 "free win": use `animation-timeline: view()` / `scroll()` so chapters get Apple-style scroll-scrubbed motion with plain CSS (no JS). Chrome/Edge stable since 2025; keep the existing GSAP effects as enhancement/fallback where they already work.
+2. **Kinetic typography** — oversized expressive headlines; type that animates/moves with scroll (letter reveal, line masking, scale). Text should feel like the design, not a caption.
+3. **View Transitions API** — cinematic chapter transitions (crossfade/slide between chapter states) where it improves the journey.
+4. **Textured backgrounds** — replace flat color blocks with subtle canvas/parchment/grain texture (CSS gradients + noise via inline SVG data-URI, no external assets).
+5. **Wellness 2026 palette discipline** — keep deep emerald #1E5B41 × gold #C8A45D on warm cream #F7F4EE, but make it feel "natural, grounded, calming" (soften harsh edges, earthy neutrals, generous negative space).
+6. **Micro-interactions (restraint)** — small purposeful touches: button ripples, hover reveals, progress bar polish. Motion must guide, not distract. Respect `prefers-reduced-motion`.
+7. **2D + 3D mix** — keep the WebGL world canvas but integrate it with the 2D typographic sections so the mix feels deliberate (e.g. particles respond to scroll, orbs echo chapter themes).
 
-Existing scaffold: Next.js 16 + Tailwind 4 + vinext (Cloudflare). You may keep it, swap it, or restructure — your call, as long as it deploys free and the 3D scroll world works. Node deps are installed; `npm run dev` serves on localhost.
+## Constraints (unchanged from before — do not break)
 
-## Deliverables
+- 9-chapter scroll world structure with distinct transitions (keep working)
+- Pixar-style images in `public/images/` (reuse; don't regenerate paid assets)
+- Floating WhatsApp CTA bottom-right, prefilled message, phone +852 9680 3500, email proartcompanyhk@gmail.com
+- Bottom bar with company info + office address
+- NO partner clubhouse names/logos anywhere
+- NO instructor names (team section stays placeholder)
+- Mobile-first; iOS must not blank out; keep 60fps on mid-range phones
+- Static export to GitHub Pages must keep working (`npm run build:github-pages` → `out/`); after your changes, rebuild and push the fresh static build to the `gh-pages` branch so the live preview URL updates. Commit source to `main`.
 
-- Working scroll world site (all 9 chapters, transitions, CTA system, bottom bar)
-- Verified: run it, check console errors, check mobile viewport, check WebGL works
-- Deploy to a free preview URL and give it to the client
-- Git commits as you go; report: what you built, stack, preview URL, what remains placeholder
+## Verify
+
+- `npm run build:github-pages` passes, `npm test` passes
+- Run dev server, check console clean, check mobile viewport
+- Rebuild + push `gh-pages` so https://cassidy753.github.io/proartcompany/ reflects the new design
+- Report: what changed, verification evidence, updated URL
