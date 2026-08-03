@@ -1,33 +1,27 @@
-# Pro Art Company — Hybrid Site Build (Codex Task v5)
+# Pro Art Company — Taste Polish + Smooth Scroll World (Codex Task v6)
 
-Restructure the site from single-page scroll world to the **Hybrid architecture** (Scheme 3, approved by client): a **condensed Scroll World opening (4 scenes)** on the home page + **multi-page normal content** (Courses / Partnership / About / Contact). 
+Continue from the hybrid architecture (ARCHITECTURE.md — still the structural spec). Client feedback on the current build:
 
-**PRIMARY SPEC: `ARCHITECTURE.md`** in this directory — read it fully and follow it exactly (page structure, per-page content, design direction, taste rules).
+1. **Direction is close** — keep the hybrid structure (4-scene scroll world home + multi-page).
+2. **Apply the Taste skill hard.** Load `~/.agents/skills/design-taste-frontend/` and run the full anti-slop discipline + pre-flight check (Section 14) on the whole site. Declare your design read + dials (ARCHITECTURE.md provides them: VARIANCE 7 / MOTION 6 / DENSITY 3, premium-consumer wellness, deep green × gold). Fix anything the pre-flight flags.
+3. **Scroll world must feel like a smooth customer experience, not choppy cuts.** The current 4-scene opening reads as disconnected stills. Make it feel like ONE continuous flight through the clubhouse world:
+   - Smooth continuous motion between scenes (crossfades / continuous zoom / matching motion direction, no hard cuts)
+   - Scene images should flow into each other (scale/blur/parallax continuity), transitions feel physical, not slapped together
+   - Tune Lenis + GSAP scrubbing so scrolling feels weighty and fluid; no jank on mobile
+   - Keep CSS scroll-driven animations and WebGL particles as enhancement, but prioritize the seamless journey feel
+4. **Interest classes are GROUP activities.** The course imagery/copy must communicate 一群⼈一齊上堂 (community, togetherness), not solo practice:
+   - NEW group images are in `public/images/`: `group-yoga.png`, `group-linedance.png`, `group-zumba.png`, `group-pilates.png` (all show groups of people practicing together). Use them in the scroll world scenes and/or course cards instead of the solo images where it improves the message.
+   - Refresh course copy to emphasize group/community: 一班人一齊、社區、同樂、一齊郁 (keep the approved tone from ARCHITECTURE.md/company-intro-draft.md).
 
-**DESIGN TASTE:** load and apply the `design-taste-frontend` skill (installed at `~/.agents/skills/design-taste-frontend/`). Declare your design read + dials (ARCHITECTURE.md gives them), then build anti-slop.
-
-## What to build
-
-1. **Navigation**: 5 items, single line, ≤80px: 首頁 · 課程 · 合作模式 · 關於我們 · 聯絡 + persistent「查詢合作」CTA (WhatsApp). Floating WhatsApp button bottom-right on every page.
-2. **Home**: 4-scene scroll world opening (keep Lenis + GSAP + CSS scroll-driven animations + WebGL particles + Pixar images) → then normal content sections: course preview cards (→ courses page), trust numbers (4+ / 15+ / 5 / 60-40), partnership intro (→ partnership page), reserved instructor section, bottom bar.
-3. **Courses page** `/courses`: 5 detailed course blocks (image + name + 2-3 line feature + suitable audience + badge), flexible arrangement note, CTA.
-4. **Partnership page** `/partnership`: 60/40 split detail, 4-step process, why-us (4 points), trust numbers, privacy note («基於商業及私隱考慮，合作單位資料不作公開展示»), CTA.
-5. **About page** `/about`: company intro (use `company-intro-draft.md` long version), vision, numbers, reserved instructor section, CTA.
-6. **Contact page** `/contact`: phone +852 9680 3500 / WhatsApp (prefilled message「你好，我哋會所想查詢健身課程合作方案。」) / email proartcompanyhk@gmail.com / office address (Flat S, 10/F, Block 3, Kwun Tong Industrial Centre, 472–484 Kwun Tong Road, Kwun Tong, Kowloon) / enquiry form (WhatsApp or mailto).
-7. **Bottom bar** on every page: company name, phone, email, address, copyright.
-
-## Constraints (non-negotiable)
-
-- NO partner clubhouse names/logos anywhere. NO instructor names (reserved placeholders only).
-- Traditional Chinese (HK) primary; subtle English accents OK.
-- Palette: deep emerald #1E5B41 × gold #C8A45D × cream #F7F4EE. Pixar-style images in `public/images/` (reuse; you may generate more with your image tool if needed for course/about pages).
-- Mobile-first; 60fps on mid-range phones; iOS must not blank; respect `prefers-reduced-motion`.
-- One CTA intent per label: use「查詢合作」consistently. Zero em-dashes in visible text. No section-number eyebrows. Nav single line.
-- GitHub Pages static export must keep working (`npm run build:github-pages` → `out/`). After building, push the fresh static build to `gh-pages` branch so https://cassidy753.github.io/proartcompany/ updates. Commit source to `main`.
+## Constraints (unchanged)
+- NO clubhouse names/logos. NO instructor names (placeholders only).
+- Palette: emerald #1E5B41 × gold #C8A45D × cream #F7F4EE. Traditional Chinese (HK).
+- Mobile-first, 60fps mid-range phones, iOS must not blank, `prefers-reduced-motion` respected.
+- CTA label「查詢合作」consistent; zero em-dashes; nav single line; WhatsApp float + bottom bar on every page.
+- GitHub Pages export (`npm run build:github-pages` → `out/`); push fresh static build to `gh-pages`; commit source to `main`.
 
 ## Verify
-
-- `npm run build:github-pages` passes, `npm test` passes (update tests for the new multi-page structure)
-- Run dev server: check all 5 routes, console clean, mobile viewport
-- Rebuild + push `gh-pages`; confirm live URL serves the new multi-page site
-- Report: what you built, page routes, URL, what remains placeholder
+- `npm run build:github-pages` + `npm test` (update tests if structure changed)
+- Dev server: check all routes, console clean, mobile, and scroll through the world opening repeatedly — must feel fluid
+- Rebuild + push `gh-pages`; confirm live URL
+- Report: what you changed (design polish, scroll smoothness, group imagery/copy), URL
