@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { FloatingWhatsApp, Footer, SiteHeader } from "./components/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -18,5 +19,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="zh-Hant-HK"><body>{children}</body></html>;
+  return <html lang="zh-Hant-HK"><body><SiteHeader />{children}<Footer /><FloatingWhatsApp /></body></html>;
 }
